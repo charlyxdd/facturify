@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 /**
  * @OA\Info(
  *     title="Inbox Messaging System API",
@@ -27,5 +29,5 @@ namespace App\Http\Controllers;
  */
 abstract class Controller
 {
-    //
+    use AuthorizesRequests;
 }

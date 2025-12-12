@@ -1,0 +1,85 @@
+### Variables
+@baseUrl = http://localhost:8000/api
+@token = 
+
+### 1. Login - Obtener Token
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "user1@test.com",
+  "password": "password"
+}
+
+### 2. Listar Threads del Usuario
+GET {{baseUrl}}/threads
+Authorization: Bearer {{token}}
+
+### 3. Listar Threads con Búsqueda
+GET {{baseUrl}}/threads?search=consulta
+Authorization: Bearer {{token}}
+
+### 4. Listar Threads No Leídos
+GET {{baseUrl}}/threads?unread=true
+Authorization: Bearer {{token}}
+
+### 5. Listar Threads con Paginación
+GET {{baseUrl}}/threads?page=1&per_page=5
+Authorization: Bearer {{token}}
+
+### 6. Ver Detalles de un Thread
+GET {{baseUrl}}/threads/1
+Authorization: Bearer {{token}}
+
+### 7. Crear Nuevo Thread
+POST {{baseUrl}}/threads
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "subject": "Nueva consulta sobre producto",
+  "body": "Hola, tengo una pregunta sobre el producto X",
+  "participants": [2, 3]
+}
+
+### 8. Crear Thread con Validación Fallida (sin subject)
+POST {{baseUrl}}/threads
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "subject": "",
+  "body": "",
+  "participants": []
+}
+
+### 9. Enviar Mensaje en Thread
+POST {{baseUrl}}/threads/1/messages
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "body": "Esta es mi respuesta al thread"
+}
+
+### 10. Enviar Mensaje con Validación Fallida
+POST {{baseUrl}}/threads/1/messages
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "body": ""
+}
+
+### 11. Intentar Ver Thread No Autorizado
+GET {{baseUrl}}/threads/999
+Authorization: Bearer {{token}}
+
+### 12. Intentar Enviar Mensaje en Thread No Autorizado
+POST {{baseUrl}}/threads/999/messages
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "body": "Mensaje no autorizado"
+}
