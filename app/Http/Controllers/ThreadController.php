@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreThreadRequest;
 use App\Http\Resources\ThreadCollection;
 use App\Http\Resources\ThreadResource;
+use App\Models\Message;
 use App\Models\Thread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -123,6 +124,15 @@ class ThreadController extends Controller
 
         $user = auth('api')->user();
 
+        Message::where('thread_id', $thread->id)
+            ->where('user_id', '!=', $user->id)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        $thread->participants()
+            ->wherePivot('user_id', $user->id)
+            ->updateExistingPivot($user->id, ['last_read_at' => now()]);
+
         $thread->load([
             'participants:id,name,email',
             'creator:id,name'
@@ -131,17 +141,6 @@ class ThreadController extends Controller
         $thread->setRelation('messages', $thread->messages()
             ->with('user:id,name,email')
             ->paginate(20));
-
-        DB::table('messages')
-            ->where('thread_id', $thread->id)
-            ->where('user_id', '!=', $user->id)
-            ->where('is_read', false)
-            ->update(['is_read' => true]);
-
-        DB::table('thread_participants')
-            ->where('thread_id', $thread->id)
-            ->where('user_id', $user->id)
-            ->update(['last_read_at' => now()]);
 
         return response()->json(new ThreadResource($thread));
     }
