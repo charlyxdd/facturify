@@ -25,4 +25,24 @@ class MessageFactory extends Factory
             'is_read' => fake()->boolean(30),
         ];
     }
+
+    /**
+     * Indica que el mensaje no ha sido leído
+     */
+    public function unread(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_read' => false,
+        ]);
+    }
+
+    /**
+     * Indica que el mensaje ha sido leído
+     */
+    public function read(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_read' => true,
+        ]);
+    }
 }
